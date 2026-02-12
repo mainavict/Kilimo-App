@@ -27,6 +27,14 @@ app.get('/', (req, res) => {
   res.send('Hello from Kilimo Backend!');
 });
 
+// Import routes
+const authRoutes = require('./routes/auth.routes');
+app.use('/api/auth', authRoutes);
+
+// Error handler (must be last)
+const { errorHandler } = require('./middleware/errorHandler');
+app.use(errorHandler);
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/api/health`);

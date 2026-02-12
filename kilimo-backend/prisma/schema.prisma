@@ -3,16 +3,30 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+  provider = "sqlite"
   url      = "file:./dev.db"
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  isVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  otps          OTP[]
+}
+
+model OTP {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code        String   // Will be hashed
+  type        String   @default("VERIFICATION") // Changed from enum to String
+  attempts    Int      @default(0)
+  maxAttempts Int      @default(3)
+  expiresAt   DateTime
+  used        Boolean  @default(false)
+  createdAt   DateTime @default(now())
 }
