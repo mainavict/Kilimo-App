@@ -76,4 +76,25 @@ const sendOTP = async (userId, email) => {
   return otpRecord;
 };
 
-module.exports = { registerUser, loginUser, sendOTP };
+
+// @desc    Get user by ID
+// @param   {string} userId - User ID
+const getUserById = async (userId) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      email: true,
+      isVerified: true
+    }
+  });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  return user;
+};
+
+// Add this to the exports at the bottom:
+module.exports = { registerUser, loginUser, sendOTP, getUserById };

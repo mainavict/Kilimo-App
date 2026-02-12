@@ -1,9 +1,9 @@
 // src/controllers/authController.js
-const { registerUser, sendOTP } = require('../services/authService');
+const { registerUser,loginUser, sendOTP } = require('../services/authService');
 const ErrorResponse = require('../utils/errorResponse');
 
 // @desc    Register user
-// @route   POST /api/auth/register
+//  @route   POST /api/auth/register
 // @access  Public
 const register = async (req, res, next) => {
   try {
@@ -34,4 +34,36 @@ const register = async (req, res, next) => {
   }
 };
 
-module.exports = { register };
+
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
+
+const  login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        // Validation
+        if (!email || !password) {
+            return next(new ErrorResponse('Please provide email and password', 400));
+        }
+
+        const user = await loginUser(email, password);
+
+        await sendOTP(user.id, user.email);
+
+        res.json({
+            success: true,
+            message: 'Login successful. Please check your email for OTP.',
+            data: {
+                id: user.id,
+                email: user.email,
+                isVerified: user.isVerified
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+    };
+
+module.exports = { register, login };
