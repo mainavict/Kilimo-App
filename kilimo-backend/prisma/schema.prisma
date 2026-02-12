@@ -3,57 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "sqlite"
+  url      = "file:./dev.db"
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String   @id @default(uuid())
-  firstName     String
-  lastName      String
-  email         String   @unique
-  phone         String   @unique
-  password      String
-  isVerified    Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  otps          OTP[]
-  submissions   FormSubmission[]
-  
-  @@map("users")
-}
-
-model OTP {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  code        String   // Will be hashed
-  type        OTPType  @default(VERIFICATION)
-  attempts    Int      @default(0)
-  maxAttempts Int      @default(3)
-  expiresAt   DateTime
-  used        Boolean  @default(false)
-  createdAt   DateTime @default(now())
-
-  @@map("otps")
-}
-
-model FormSubmission {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  firstName   String
-  lastName    String
-  email       String
-  phone       String
-  message     String
-  createdAt   DateTime @default(now())
-
-  @@map("form_submissions")
-}
-
-enum OTPType {
-  VERIFICATION
-  PASSWORD_RESET
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
