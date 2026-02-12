@@ -31,9 +31,11 @@ app.get('/', (req, res) => {
 const otpRoutes = require('./routes/otp.routes');
 const authRoutes = require('./routes/auth.routes');
 const profileRoutes = require('./routes/profile.routes');
+const formRoutes = require('./routes/form.routes');
 app.use('/api/auth', authRoutes);
 app.use('/api/otp', otpRoutes); 
 app.use('/api/profile', profileRoutes);
+app.use('/api/form', formRoutes);
 
 // Error handler (must be last)
 const { errorHandler } = require('./middleware/errorHandler');
