@@ -22,8 +22,8 @@ model OTP {
   id          String   @id @default(uuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  code        String   // Will be hashed
-  type        String   @default("VERIFICATION") // Changed from enum to String
+  code        String
+  type        String   @default("VERIFICATION")
   attempts    Int      @default(0)
   maxAttempts Int      @default(3)
   expiresAt   DateTime

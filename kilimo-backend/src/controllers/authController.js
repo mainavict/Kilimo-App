@@ -1,5 +1,5 @@
-
-const { registerUser } = require('../services/authService');
+// src/controllers/authController.js
+const { registerUser, sendOTP } = require('../services/authService');
 const ErrorResponse = require('../utils/errorResponse');
 
 // @desc    Register user
@@ -14,16 +14,19 @@ const register = async (req, res, next) => {
       return next(new ErrorResponse('Please provide email and password', 400));
     }
 
-    // Register user
+    // Register user in database
     const user = await registerUser(email, password);
+
+    // Send OTP to user's email
+    await sendOTP(user.id, user.email);
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: 'User registered successfully. Please check your email for OTP.',
       data: {
         id: user.id,
         email: user.email,
-        createdAt: user.createdAt
+        isVerified: user.isVerified
       }
     });
   } catch (error) {
