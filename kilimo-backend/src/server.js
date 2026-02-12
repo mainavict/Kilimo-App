@@ -30,8 +30,10 @@ app.get('/', (req, res) => {
 // Import routes
 const otpRoutes = require('./routes/otp.routes');
 const authRoutes = require('./routes/auth.routes');
+const profileRoutes = require('./routes/profile.routes');
 app.use('/api/auth', authRoutes);
 app.use('/api/otp', otpRoutes); 
+app.use('/api/profile', profileRoutes);
 
 // Error handler (must be last)
 const { errorHandler } = require('./middleware/errorHandler');

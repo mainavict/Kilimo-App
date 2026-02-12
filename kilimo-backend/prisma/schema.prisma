@@ -16,6 +16,7 @@ model User {
   updatedAt     DateTime @updatedAt
   
   otps          OTP[]
+  submissions   FormSubmission[]
 }
 
 model OTP {
@@ -29,4 +30,16 @@ model OTP {
   expiresAt   DateTime
   used        Boolean  @default(false)
   createdAt   DateTime @default(now())
+}
+
+model FormSubmission {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+  message   String
+  createdAt DateTime @default(now())
 }
