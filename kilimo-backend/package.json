@@ -2,11 +2,12 @@
   "name": "kilimo-backend",
   "version": "1.0.0",
   "description": "Kilimo App Backend API",
-  "main": "src/server.js",
+  "main": "index.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "node src/server.js",
-    "build": "prisma generate && next build"
+    "build": "prisma generate",
+    "postinstall": "prisma generate"
   },
   "keywords": ["kilimo", "agriculture", "backend", "api"],
   "author": "Victor Mwangi Maina",
