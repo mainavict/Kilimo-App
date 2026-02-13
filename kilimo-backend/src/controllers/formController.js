@@ -1,6 +1,7 @@
 // src/controllers/formController.js
-const prisma = require('../models/prisma');
+const { getPrisma } = require('../models/prisma');
 const ErrorResponse = require('../utils/errorResponse');
+const prisma = getPrisma();
 
 /**
  * @desc    Submit form
