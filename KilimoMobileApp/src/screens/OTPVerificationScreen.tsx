@@ -118,13 +118,16 @@ export default function OTPVerificationScreen({
     try {
       const response = await AuthService.resendOTP(email);
       if (response.success) {
-        Alert.alert('Success', 'A new verification code has been sent to your email.');
+        Alert.alert(
+          "Success",
+          "A new verification code has been sent to your email.",
+        );
         setTimer(60);
-        setOtp(['', '', '', '', '', '']);
+        setOtp(["", "", "", "", "", ""]);
         inputRefs.current[0]?.focus();
       }
     } catch (error) {
-      Alert.alert('Error', formatErrorMessage(error));
+      Alert.alert("Error", formatErrorMessage(error));
     }
   };
 
@@ -226,7 +229,7 @@ export default function OTPVerificationScreen({
           activeOpacity={0.8}
         >
           {isVerifying ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <ActivityIndicator color="#fff" style={{ marginRight: 10 }} />
               <Text style={styles.verifyButtonText}>Verifying...</Text>
             </View>

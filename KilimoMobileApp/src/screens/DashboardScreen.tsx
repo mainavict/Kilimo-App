@@ -34,32 +34,28 @@ export default function DashboardScreen({ onLogout }: DashboardScreenProps) {
   };
 
   const handleLogout = async () => {
-    Alert.alert(
-      "Logout",
-      "Are you sure you want to logout?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Logout",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await StorageService.removeTokens();
-              await StorageService.removeUserData();
-              if (onLogout) {
-                onLogout();
-              }
-            } catch (error) {
-              console.error("Error during logout:", error);
-              Alert.alert("Error", "Failed to logout. Please try again.");
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await StorageService.removeTokens();
+            await StorageService.removeUserData();
+            if (onLogout) {
+              onLogout();
             }
-          },
+          } catch (error) {
+            console.error("Error during logout:", error);
+            Alert.alert("Error", "Failed to logout. Please try again.");
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   return (
@@ -111,9 +107,7 @@ export default function DashboardScreen({ onLogout }: DashboardScreenProps) {
                 <Text style={styles.cardEmoji}>🌤️</Text>
               </View>
               <Text style={styles.cardTitle}>Weather</Text>
-              <Text style={styles.cardDescription}>
-                Check weather updates
-              </Text>
+              <Text style={styles.cardDescription}>Check weather updates</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.card}>
@@ -131,9 +125,7 @@ export default function DashboardScreen({ onLogout }: DashboardScreenProps) {
                 <Text style={styles.cardEmoji}>📚</Text>
               </View>
               <Text style={styles.cardTitle}>Resources</Text>
-              <Text style={styles.cardDescription}>
-                Access farming guides
-              </Text>
+              <Text style={styles.cardDescription}>Access farming guides</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.card}>
@@ -141,9 +133,7 @@ export default function DashboardScreen({ onLogout }: DashboardScreenProps) {
                 <Text style={styles.cardEmoji}>👤</Text>
               </View>
               <Text style={styles.cardTitle}>Profile</Text>
-              <Text style={styles.cardDescription}>
-                Manage your account
-              </Text>
+              <Text style={styles.cardDescription}>Manage your account</Text>
             </TouchableOpacity>
           </View>
 
