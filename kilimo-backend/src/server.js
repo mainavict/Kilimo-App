@@ -1,9 +1,9 @@
 // src/server.js
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,24 +18,24 @@ app.use(express.urlencoded({ extended: true }));
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  message: 'Too many requests from this IP, please try again later',
+  message: "Too many requests from this IP, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-app.use('/api/', limiter);
+app.use("/api/", limiter);
 
 // Health check route
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "OK",
     timestamp: new Date().toISOString(),
-    message: 'Kilimo Backend is running!'
+    message: "Kilimo Backend is running!",
   });
 });
 
 // Basic test route
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.send(`
     <h1>🌱 Kilimo App Backend</h1>
     <p>API Endpoints:</p>
@@ -53,17 +53,17 @@ app.get('/', (req, res) => {
 });
 
 // Import routes
-const authRoutes = require('./routes/auth.routes');
-const otpRoutes = require('./routes/otp.routes');
-const profileRoutes = require('./routes/profile.routes');
-const formRoutes = require('./routes/form.routes');
-app.use('/api/auth', authRoutes);
-app.use('/api/otp', otpRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/form', formRoutes);
+const authRoutes = require("./routes/auth.routes");
+const otpRoutes = require("./routes/otp.routes");
+const profileRoutes = require("./routes/profile.routes");
+const formRoutes = require("./routes/form.routes");
+app.use("/api/auth", authRoutes);
+app.use("/api/otp", otpRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/form", formRoutes);
 
 // Error handler (must be last)
-const { errorHandler } = require('./middleware/errorHandler');
+const { errorHandler } = require("./middleware/errorHandler");
 app.use(errorHandler);
 
 // Export for Vercel serverless
