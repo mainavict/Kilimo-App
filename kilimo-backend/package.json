@@ -7,8 +7,7 @@
     "start": "node src/server.js",
     "dev": "node src/server.js",
     "build": "prisma generate",
-    "postinstall": "prisma generate",
-    "vercel-build": "prisma generate"
+    "postinstall": "prisma generate"
   },
   "keywords": ["kilimo", "agriculture", "backend", "api"],
   "author": "Victor Mwangi Maina",

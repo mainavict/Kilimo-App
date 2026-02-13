@@ -1,8 +1,11 @@
 // src/services/authService.js
 const bcrypt = require('bcryptjs');
-const prisma = require('../models/prisma');
+const { getPrisma } = require('../models/prisma');
 const { createOTP } = require('./otpService');
 const { sendOTPEmail } = require('./emailService');
+
+
+const prisma = getPrisma();
 
 // @desc    Register user
 // @param   {string} email - User email
