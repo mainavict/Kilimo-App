@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
   // Kilimo Backend on Vercel
-  BASE_URL: "https://kilimo-app-git-main-mainavicts-projects.vercel.app/api",
+  BASE_URL: "https://kilimo-app-nine.vercel.app/api",
   TIMEOUT: 30000,
 };
 
