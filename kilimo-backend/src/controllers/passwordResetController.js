@@ -33,18 +33,18 @@ const forgotPassword = async (req, res, next) => {
  */
 const resetPasswordController = async (req, res, next) => {
   try {
-    const { userId, otp, newPassword } = req.body;
+    const { email, otp, newPassword } = req.body;
 
     // Validation
-    if (!userId || !otp || !newPassword) {
-      return next(new ErrorResponse('Please provide userId, otp, and newPassword', 400));
+    if (!email || !otp || !newPassword) {
+      return next(new ErrorResponse('Please provide email, otp, and newPassword', 400));
     }
 
     if (newPassword.length < 8) {
       return next(new ErrorResponse('Password must be at least 8 characters', 400));
     }
 
-    const result = await resetPassword(userId, otp, newPassword);
+    const result = await resetPassword(email, otp, newPassword);
 
     res.json({
       success: result.success,

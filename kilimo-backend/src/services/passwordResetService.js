@@ -40,17 +40,24 @@ const requestPasswordReset = async (email) => {
  * @param {string} newPassword - New password
  * @returns {Promise<Object>} Success message
  */
-const resetPassword = async (userId, otp, newPassword) => {
+const resetPassword = async (email, otp, newPassword) => {
   try {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() }
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
     // Verify OTP
-    await verifyOTP(userId, otp, "PASSWORD_RESET");
+    await verifyOTP(user.id, otp, "PASSWORD_RESET");
 
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update password
     await prisma.user.update({
-      where: { id: userId },
+      where: { id: user.id },
       data: { password: hashedPassword }
     });
 
