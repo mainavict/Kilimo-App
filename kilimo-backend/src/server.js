@@ -1,4 +1,4 @@
-
+// src/server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -25,7 +25,6 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-
 // Health check route
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -37,7 +36,20 @@ app.get('/api/health', (req, res) => {
 
 // Basic test route
 app.get('/', (req, res) => {
-  res.send('Kilimo Backend');
+  res.send(`
+    <h1>🌱 Kilimo App Backend</h1>
+    <p>API Endpoints:</p>
+    <ul>
+      <li><strong>POST /api/auth/register</strong> - Register user</li>
+      <li><strong>POST /api/auth/login</strong> - Login user</li>
+      <li><strong>POST /api/otp/verify</strong> - Verify OTP</li>
+      <li><strong>POST /api/form/submit</strong> - Submit form (authenticated)</li>
+      <li><strong>GET /api/form/submissions</strong> - Get submissions (authenticated)</li>
+      <li><strong>GET /api/profile</strong> - Get profile (authenticated)</li>
+      <li><strong>GET /api/health</strong> - Health check</li>
+    </ul>
+    <p>Full API documentation available in README.md</p>
+  `);
 });
 
 // Import routes
@@ -54,7 +66,13 @@ app.use('/api/form', formRoutes);
 const { errorHandler } = require('./middleware/errorHandler');
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 Health check: http://localhost:${PORT}/api/health`);
-});
+// Export for Vercel serverless
+if (process.env.NODE_ENV === 'production') {
+  module.exports = app;
+} else {
+  app.listen(PORT, () => {
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
+    console.log(`✅ API Base URL: http://localhost:${PORT}/api`);
+  });
+}
