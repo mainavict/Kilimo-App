@@ -1,6 +1,7 @@
 {
   "version": 2,
   "name": "kilimo-backend",
+  "buildCommand": "npm install && npx prisma generate",
   "builds": [
     {
       "src": "src/server.js",

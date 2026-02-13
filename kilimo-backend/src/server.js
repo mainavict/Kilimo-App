@@ -67,9 +67,10 @@ const { errorHandler } = require('./middleware/errorHandler');
 app.use(errorHandler);
 
 // Export for Vercel serverless
-if (process.env.NODE_ENV === 'production') {
-  module.exports = app;
-} else {
+module.exports = app;
+
+// Local development server (only runs when executed directly)
+if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
     console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
