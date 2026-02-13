@@ -1,10 +1,8 @@
 // src/services/passwordResetService.js
 const bcrypt = require('bcryptjs');
-const { getPrisma } = require('../models/prisma');
+const prisma = require('../models/prisma');
 const { createOTP, verifyOTP } = require('./otpService');
 const { sendOTPEmail } = require('./emailService');
-
-const prisma = getPrisma();
 
 /**
  * Request password reset - sends OTP to user's email

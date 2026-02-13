@@ -1,27 +1,19 @@
 // src/models/prisma.js
 const { PrismaClient } = require('@prisma/client');
 
+// Global Prisma instance for serverless
 let prisma;
 
-// Initialize Prisma Client only once
-const initPrisma = () => {
-  if (!prisma) {
-    prisma = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error']
+if (process.env.NODE_ENV === 'production') {
+  prisma = new PrismaClient();
+} else {
+  // In development, use a global variable to avoid creating multiple instances
+  if (!global.prisma) {
+    global.prisma = new PrismaClient({
+      log: ['query', 'error', 'warn'],
     });
-    
-    // Add connection test
-    prisma.$connect()
-      .then(() => console.log('✅ Prisma Client connected successfully'))
-      .catch(err => {
-        console.error('❌ Prisma Client failed to connect:', err.message);
-        console.error('💡 Check DATABASE_URL in Vercel environment variables');
-      });
   }
-  return prisma;
-};
+  prisma = global.prisma;
+}
 
-// Export a function that returns the initialized client
-module.exports = {
-  getPrisma: initPrisma
-};
+module.exports = prisma;
