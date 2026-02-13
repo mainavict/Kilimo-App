@@ -58,15 +58,31 @@ app.get("/", (req, res) => {
   `);
 });
 
-// Import routes
-const authRoutes = require("./routes/auth.routes");
-const otpRoutes = require("./routes/otp.routes");
-const profileRoutes = require("./routes/profile.routes");
-const formRoutes = require("./routes/form.routes");
-app.use("/api/auth", authRoutes);
-app.use("/api/otp", otpRoutes);
-app.use("/api/profile", profileRoutes);
-app.use("/api/form", formRoutes);
+// Import routes - loaded after middleware setup to ensure dependencies are ready
+try {
+  const authRoutes = require("./routes/auth.routes");
+  const otpRoutes = require("./routes/otp.routes");
+  const profileRoutes = require("./routes/profile.routes");
+  const formRoutes = require("./routes/form.routes");
+  
+  app.use("/api/auth", authRoutes);
+  app.use("/api/otp", otpRoutes);
+  app.use("/api/profile", profileRoutes);
+  app.use("/api/form", formRoutes);
+  
+  console.log('✅ All routes loaded successfully');
+} catch (error) {
+  console.error('❌ Error loading routes:', error.message);
+  
+  // Fallback error handler for route loading failures
+  app.all("/api/*", (req, res) => {
+    res.status(500).json({
+      error: "API routes failed to initialize",
+      message: error.message,
+      hint: "Check if Prisma client is generated and DATABASE_URL is set"
+    });
+  });
+}
 
 // Error handler (must be last)
 const { errorHandler } = require("./middleware/errorHandler");
