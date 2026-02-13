@@ -122,4 +122,33 @@ const verifyOTP = async (userId, otpCode, type = "VERIFICATION") => {
   }
 };
 
-module.exports = { createOTP, verifyOTP };
+
+/**
+ * Check if valid OTP exists for user
+ * @param {string} userId - User ID
+ * @param {string} type - OTP type
+ * @returns {Promise<Object|null>} OTP record or null
+ */
+const getValidOTP = async (userId, type = "VERIFICATION") => {
+  try {
+    const otpRecord = await prisma.oTP.findFirst({
+      where: {
+        userId,
+        type,
+        used: false
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    if (!otpRecord || new Date() > otpRecord.expiresAt) {
+      return null;
+    }
+
+    return otpRecord;
+  } catch (error) {
+    return null;
+  }
+};
+
+// Add to exports
+module.exports = { createOTP, verifyOTP, getValidOTP };
