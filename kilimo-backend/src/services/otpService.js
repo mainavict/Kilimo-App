@@ -5,34 +5,17 @@ const generateOTP = require('../utils/generateOTP');
 
 const OTP_EXPIRE_MINUTES = parseInt(process.env.OTP_EXPIRE_MINUTES) || 2;
 
-/**
- * Create and store OTP for a user
- * @param {string} userId - User ID
- * @param {string} type - OTP type ("VERIFICATION" or "PASSWORD_RESET")
- * @returns {Promise<Object>} OTP record and plain OTP code
- */
 const createOTP = async (userId, type = "VERIFICATION") => {
   try {
-    // Invalidate any existing unused OTPs for this user
     await prisma.oTP.updateMany({
-      where: {
-        userId,
-        used: false,
-        type
-      },
+      where: { userId, used: false, type },
       data: { used: true }
     });
 
-    // Generate OTP using your secure crypto function
     const otpCode = generateOTP();
-    
-    // Hash OTP before storing in database
     const hashedOTP = await bcrypt.hash(otpCode, 10);
-    
-    // Calculate expiry time (default 2 minutes)
     const expiresAt = new Date(Date.now() + OTP_EXPIRE_MINUTES * 60 * 1000);
 
-    // Save OTP to database
     const otpRecord = await prisma.oTP.create({
       data: {
         userId,
@@ -45,7 +28,6 @@ const createOTP = async (userId, type = "VERIFICATION") => {
       }
     });
 
-    // Return both the record and the plain OTP code (for sending via email)
     return { otpRecord, otpCode };
   } catch (error) {
     console.error('Error creating OTP:', error);
@@ -53,56 +35,28 @@ const createOTP = async (userId, type = "VERIFICATION") => {
   }
 };
 
-/**
- * Verify OTP code
- * @param {string} userId - User ID
- * @param {string} otpCode - OTP code to verify (6 digits)
- * @param {string} type - OTP type
- * @returns {Promise<boolean>} True if valid
- */
 const verifyOTP = async (userId, otpCode, type = "VERIFICATION") => {
   try {
-    // Find the most recent unused OTP for this user
     const otpRecord = await prisma.oTP.findFirst({
-      where: {
-        userId,
-        type,
-        used: false
-      },
+      where: { userId, type, used: false },
       orderBy: { createdAt: 'desc' }
     });
 
-    // Check if OTP record exists
-    if (!otpRecord) {
-      throw new Error('Invalid or expired OTP');
-    }
-
-    // Check if OTP has expired
+    if (!otpRecord) throw new Error('Invalid or expired OTP');
     if (new Date() > otpRecord.expiresAt) {
-      await prisma.oTP.update({
-        where: { id: otpRecord.id },
-        data: { used: true }
-      });
+      await prisma.oTP.update({ where: { id: otpRecord.id }, data: { used: true } });
       throw new Error('OTP has expired');
     }
-
-    // Check if maximum attempts reached
     if (otpRecord.attempts >= otpRecord.maxAttempts) {
-      await prisma.oTP.update({
-        where: { id: otpRecord.id },
-        data: { used: true }
-      });
+      await prisma.oTP.update({ where: { id: otpRecord.id }, data: { used: true } });
       throw new Error('Maximum OTP attempts exceeded');
     }
 
-    // Verify the OTP code (compare with hashed version)
     const isValid = await bcrypt.compare(otpCode, otpRecord.code);
-
     if (!isValid) {
-      // Increment failed attempts
       await prisma.oTP.update({
         where: { id: otpRecord.id },
-        data: {
+        data: { 
           attempts: otpRecord.attempts + 1,
           used: otpRecord.attempts + 1 >= otpRecord.maxAttempts
         }
@@ -110,45 +64,11 @@ const verifyOTP = async (userId, otpCode, type = "VERIFICATION") => {
       throw new Error('Invalid OTP code');
     }
 
-    // Mark OTP as used (successful verification)
-    await prisma.oTP.update({
-      where: { id: otpRecord.id },
-      data: { used: true }
-    });
-
+    await prisma.oTP.update({ where: { id: otpRecord.id }, data: { used: true } });
     return true;
   } catch (error) {
     throw error;
   }
 };
 
-
-/**
- * Check if valid OTP exists for user
- * @param {string} userId - User ID
- * @param {string} type - OTP type
- * @returns {Promise<Object|null>} OTP record or null
- */
-const getValidOTP = async (userId, type = "VERIFICATION") => {
-  try {
-    const otpRecord = await prisma.oTP.findFirst({
-      where: {
-        userId,
-        type,
-        used: false
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-
-    if (!otpRecord || new Date() > otpRecord.expiresAt) {
-      return null;
-    }
-
-    return otpRecord;
-  } catch (error) {
-    return null;
-  }
-};
-
-// Add to exports
-module.exports = { createOTP, verifyOTP, getValidOTP };
+module.exports = { createOTP, verifyOTP };

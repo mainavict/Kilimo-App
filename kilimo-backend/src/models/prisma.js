@@ -1,27 +1,24 @@
 // src/models/prisma.js
 const { PrismaClient } = require('@prisma/client');
 
-let prisma;
+// Initialize Prisma Client immediately (synchronously)
+const prisma = new PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error']
+});
 
-// Initialize Prisma Client only once
-const initPrisma = () => {
-  if (!prisma) {
-    prisma = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error']
+// Force initialization (synchronous)
+try {
+  prisma.$connect()
+    .then(() => console.log('✅ Prisma Client connected successfully'))
+    .catch(err => {
+      console.error('❌ Prisma Client failed to connect:', err.message);
+      console.error('💡 Check DATABASE_URL in Vercel environment variables');
+      process.exit(1); // Crash immediately if connection fails
     });
-    
-    // Add connection test
-    prisma.$connect()
-      .then(() => console.log('✅ Prisma Client connected successfully'))
-      .catch(err => {
-        console.error('❌ Prisma Client failed to connect:', err.message);
-        console.error('💡 Check DATABASE_URL in Vercel environment variables');
-      });
-  }
-  return prisma;
-};
+} catch (err) {
+  console.error('❌ Critical initialization error:', err.message);
+  process.exit(1);
+}
 
-// Export a function that returns the initialized client
-module.exports = {
-  getPrisma: initPrisma
-};
+// Export the initialized client
+module.exports = prisma;
