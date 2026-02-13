@@ -31,6 +31,12 @@ app.get("/api/health", (req, res) => {
     status: "OK",
     timestamp: new Date().toISOString(),
     message: "Kilimo Backend is running!",
+    env: {
+      hasDatabase: !!process.env.DATABASE_URL,
+      hasJWT: !!process.env.JWT_SECRET,
+      hasEmail: !!process.env.RESEND_API_KEY,
+      nodeEnv: process.env.NODE_ENV
+    }
   });
 });
 
