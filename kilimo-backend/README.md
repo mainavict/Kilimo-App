@@ -143,7 +143,7 @@ Create a `.env` file in the root directory:
 
 ```env
 # Database
-DATABASE_URL="postgresql://username:password@localhost:5432/kilimo_db"
+DATABASE_URL="******************************************************************8"
 
 # Server
 PORT=5000
@@ -157,7 +157,7 @@ SMTP_HOST=your_smtp_host
 SMTP_PORT=587
 SMTP_USER=your_email
 SMTP_PASS=your_password
-RESEND_API_KEY=your_resend_api_key
+
 ```
 
 ### Installation
